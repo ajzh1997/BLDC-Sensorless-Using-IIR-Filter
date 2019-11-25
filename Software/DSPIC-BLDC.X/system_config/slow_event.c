@@ -24,7 +24,7 @@ void SlowEvent(void)
 //		RunMode = HALL_SENSOR_MODE;	
 //	}
 
-	if(BUTTON_S1 && !DebounceFlags.Button_S1) 
+	if(BUTTON_S1 && !DebounceFlags.Button_S1 && RunMode == MOTOR_OFF) 
 	{
 		DebounceFlags.Button_S1 = 1;
 		RunMode = SENSORLESS_INIT;
@@ -38,7 +38,7 @@ void SlowEvent(void)
 //		RunMode = SENSORLESS_RUNNING;
 //	}
 
-	if(BUTTON_S2 && !DebounceFlags.Button_S2)
+	if(BUTTON_S2 && !DebounceFlags.Button_S2 && RunMode != MOTOR_OFF)
 	{
 		DebounceFlags.Button_S2 = 1;
 		RunMode = MOTOR_OFF;
