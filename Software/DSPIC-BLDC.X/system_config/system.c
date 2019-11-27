@@ -20,7 +20,7 @@
 
 // FBORPOR
 #pragma config FPWRT = PWRT_64          // POR Timer Value (64ms)
-#pragma config BODENV = BORV45          // Brown Out Voltage (4.5V)
+#pragma config BODENV = BORV20          // Brown Out Voltage (2.0V)
 #pragma config BOREN = PBOR_ON          // PBOR Enable (Enabled)
 #pragma config LPOL = PWMxL_ACT_HI      // Low-side PWM Output Polarity (Active High)
 #pragma config HPOL = PWMxH_ACT_HI      // High-side PWM Output Polarity (Active High)
