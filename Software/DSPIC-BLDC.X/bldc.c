@@ -3,8 +3,13 @@
 #include "system_config/turning.h"
 #include "BEMF_filter.h"
 #include "IIR_Filter.h"
-//#include "snap.h"
-#include "stdio.h"
+#include "snap.h"
+#ifdef SNAPSHOT
+int SnapBuf1[SNAPSIZE];
+int SnapBuf2[SNAPSIZE];
+int SnapBuf3[SNAPSIZE];
+int SnapBuf4[SNAPSIZE];
+#endif
 // ----------------- Global Variable Declarations ----------------------
 unsigned int pot;		    // stores the potentiometer value
 unsigned int HalltoSector[8] = {-1,2,4,3,0,1,5,-1};
@@ -47,15 +52,13 @@ unsigned int ThirtyDegreeTimeAverage();
   Inputs:        None
   Returns:       None
 -----------------------------------------------------------------------*/
-void __attribute__((__interrupt__ , auto_psv)) _ADCInterrupt( void )   // occurs at a rate of 81.920 kHz
+void __attribute__((__interrupt__ , no_auto_psv)) _ADCInterrupt( void )   // occurs at a rate of 81.920 kHz
 {
 	/* reset ADC interrupt flag */
 	IFS0bits.ADIF = 0; 
 		
 	// Read the potentiometer and phase voltages.
 	pot = (pot + POTBUF) >> 1;
-    //printf("%d\r\n",pot);
-    //pot = POTBUF;
 	if (BlankingCount)				// if the blanking count hasn't expired, feed the Back EMF
 	{								// filters the last filtered Back EMF sample (rather than the unfiltered sample.)
 		BlankingCount--;
@@ -113,12 +116,11 @@ void __attribute__((__interrupt__ , auto_psv)) _ADCInterrupt( void )   // occurs
   Inputs:        None
   Returns:       None
 -----------------------------------------------------------------------*/
-void __attribute__((__interrupt__ , auto_psv)) _T1Interrupt( void ) 
+void __attribute__((__interrupt__ , no_auto_psv)) _T1Interrupt( void ) 
 {
 	IFS0bits.T1IF = 0;
 	if (Timer1TimeoutCntr++ >= NumOfTimer1TimeOuts)  // When Timer 1 overflows the algorithm is lost
 	{
-        printf("FAIL\r\n");
 		IEC0bits.T1IE = 0;		// turn off Timer 1 and stop the motor
 		RunMode = MOTOR_OFF;
 	}
@@ -130,7 +132,7 @@ void __attribute__((__interrupt__ , auto_psv)) _T1Interrupt( void )
   Inputs:        None
   Returns:       None
 -----------------------------------------------------------------------*/
-void __attribute__((__interrupt__ , auto_psv)) _T2Interrupt( void )  // TMR 2 is never turned on in Hall Mode
+void __attribute__((__interrupt__ , no_auto_psv)) _T2Interrupt( void )  // TMR 2 is never turned on in Hall Mode
 {
 	TMR2 = 0;			   			// clear TMR2
 	IFS0bits.T2IF = 0;
@@ -149,7 +151,7 @@ void __attribute__((__interrupt__ , auto_psv)) _T2Interrupt( void )  // TMR 2 is
   Inputs:        None
   Returns:       None
 -----------------------------------------------------------------------*/
-void __attribute__((__interrupt__ , auto_psv)) _T3Interrupt( void )  // TMR 3 is never turned on in Hall Mode
+void __attribute__((__interrupt__ , no_auto_psv)) _T3Interrupt( void )  // TMR 3 is never turned on in Hall Mode
 {
 	T3CONbits.TON = 0;     			// turn off TMR3
 	TMR3 = 0;
@@ -173,7 +175,7 @@ void __attribute__((__interrupt__ , auto_psv)) _T3Interrupt( void )  // TMR 3 is
   Returns:       None
 -----------------------------------------------------------------------*/
 
-void __attribute__((__interrupt__ , auto_psv)) _PWMInterrupt( void )  // Occurs every 50us or at a rate of 20kHz
+void __attribute__((__interrupt__ , no_auto_psv)) _PWMInterrupt( void )  // Occurs every 50us or at a rate of 20kHz
 {
 	IFS2bits.PWMIF = 0;             // Clear the PWM interrupt flag
 	if (++SlowEventCounter >= 200)	// Fire Slow event every 10ms
@@ -187,11 +189,11 @@ void __attribute__((__interrupt__ , auto_psv)) _PWMInterrupt( void )  // Occurs 
 		MediumEventCounter = 0;
 		ControlFlags.MediumEventFlag = 1;
 	}
-    if(++UARTEventCounter >= 2000)  // 100ms
-    {
-        UARTEventCounter = 0;
-        ControlFlags.UARTEventFlag = 1;
-    }
+//    if(++UARTEventCounter >= 2000)  // 100ms
+//    {
+//        UARTEventCounter = 0;
+//        ControlFlags.UARTEventFlag = 1;
+//    }
     //
 	if (RunMode == SENSORLESS_START)
 	{
@@ -233,11 +235,19 @@ void CheckZeroCrossing(void)
 	vbus_offset = accumulator_c >> 13;
 
 	#ifdef SNAPSHOT
-			pha_Raw = ADCBUF2; // phase A Raw data	
-			pha_pre_filtered = vpha;	 // phase A pre-filtered data (includes effect of blanking count)
-			pha_filtered = vpha_filtered_sample; // phase a filtered sample
-			signal_average_uart = signal_average;
+		if (ControlFlags.TakeSnapshot)     // The TakeSnapshot control flag is set by pressing S6
+		{
+			SnapBuf1[pos_ptr] = ADCBUF2; // phase A Raw data	
+			SnapBuf2[pos_ptr] = vpha;	 // phase A pre-filtered data (includes effect of blanking count)
+			SnapBuf3[pos_ptr] = vpha_filtered_sample; // phase a filtered sample
+			SnapBuf4[pos_ptr] = signal_average;
 			pos_ptr++;
+			if(pos_ptr > (SNAPSIZE-1))
+			{
+				pos_ptr = 0;
+				ControlFlags.TakeSnapshot = 0;  // Clear the flag to prevent creating a circular buffer
+			}
+		}
 	#endif
 
 	if (ZeroCrossState < 6)

@@ -34,7 +34,7 @@ void Init_ADC( void )
 	ADCSSL = ADCSSL_LOW_SPEED;  // Scan all 5 channels
 	
 	/* channel select AN7 */
-	ADCHS = 0x0000;
+	ADCHS = 0x0002;
 //    ADCHSbits.CH0SA1 = 1;
 //    ADCHSbits.CH0NA = 0;
 	/* reset ADC interrupt flag */

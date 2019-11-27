@@ -66,13 +66,12 @@ void MediumEvent(void)
 				//  divided by 2 - hence the 2 in the numerator of the following 
 				//  equation.)
 				Speed = (unsigned long)(__builtin_divud(((unsigned long)ElectricalSpeed*120),NoOfMotorPoles));
-                //printf("%ld\r\n",Speed);
 				if (ControlFlags.SpeedControlEnable)
 				{
-					PIDStructure.controlReference = RPM_converter_constant * pot;
+					//PIDStructure.controlReference = RPM_converter_constant * pot;
+                    PIDStructure.controlReference = 3000;
 					PIDStructure.measuredOutput = Speed;
 					PID(&PIDStructure);
-                    //printf("%d\r\n",pot);
 					if (PIDStructure.controlOutput < 0)
 						PIDStructure.controlOutput = 0;
 					if (PIDStructure.controlOutput > 32439) 
@@ -81,9 +80,13 @@ void MediumEvent(void)
 						PIDStructure.controlOutput = 32439;
 					}
 					else
+                    {
 						PDC1 = __builtin_divud((FULL_DUTY*PIDStructure.controlOutput),32439);
+                    }
 					PDC2 = PDC1;
 					PDC3 = PDC1;
+                    printf("%d\n",PIDStructure.controlOutput);
+                    //printf("%d\n",PDC1);
 				}
 				else if (ControlFlags.EnablePotentiometer)
 				{
@@ -141,6 +144,7 @@ void MediumEvent(void)
 						{
 							SensorlessStartState = 0;
 							RunMode = SENSORLESS_RUNNING;
+                            //ADCON2 = 0x0010;
 							T3CONbits.TON = 0; 	
 							IEC0bits.T3IE = 0;
 							IFS0bits.T1IF = 0;  
@@ -151,7 +155,6 @@ void MediumEvent(void)
 							// check for demand change
 							if (ramp_timer%ramp_demand_rate == 0)
 								ramp_demand++;
-                            //printf("%d\r\n",ramp_demand);
 							PDC1 = (unsigned int) ramp_demand;
 							PDC2 = PDC1;
 							PDC3 = PDC1;

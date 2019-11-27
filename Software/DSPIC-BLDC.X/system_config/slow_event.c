@@ -1,6 +1,5 @@
 #include "../bldc.h"
 #include "hardware.h"
-#include "stdio.h"
 void SlowEvent(void)
 {
 	volatile struct {
@@ -28,7 +27,7 @@ void SlowEvent(void)
 	{
 		DebounceFlags.Button_S1 = 1;
 		RunMode = SENSORLESS_INIT;
-        printf("SENSORLESS_INIT\r\n");
+        UART1_WriteBuffer("SENSORLESS_INIT\r",16);
 	}
 
 //	if(BUTTON_S6 && !DebounceFlags.Button_S6) 
@@ -42,7 +41,7 @@ void SlowEvent(void)
 	{
 		DebounceFlags.Button_S2 = 1;
 		RunMode = MOTOR_OFF;
-        printf("MOTOR OFF\r\n");
+        UART1_WriteBuffer("MOTOR_OFF\r",10);
 		SensorlessStartState = 0;
 	}
 

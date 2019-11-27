@@ -8,6 +8,8 @@
 #include "driver/adc.h"
 #include "dsp.h"
 
+
+//#define SNAPSHOT
 // Function declarations
 void Commutate(unsigned int sector);
 

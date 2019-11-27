@@ -14,4 +14,5 @@ driver/MCPWM.h  \
 driver/adc.h  \
 dsp.h  \
 BEMF_filter.h  \
- IIR_Filter.h 
+ IIR_Filter.h  \
+snap.h 

@@ -5,7 +5,6 @@
  * Created on November 23, 2019, 12:05 PM
  */
 
-#include "stdio.h"
 #include "stdlib.h"
 #include "stddef.h"
 #include "stdbool.h"
@@ -22,22 +21,18 @@ void INIT_SYSTEMS(void);    // Khởi tạo hệ thống
 int main(void) 
 {
     INIT_SYSTEMS();
-    printf("INIT SYSTEMS\r\n");
     IIRTransposeFilterInit( &BEMF_phaseA_Filter );
 	IIRTransposeFilterInit( &BEMF_phaseB_Filter );
 	IIRTransposeFilterInit( &BEMF_phaseC_Filter );
     RunMode = MOTOR_OFF;
     ControlFlags.SpeedControlEnable = 1;
+    ControlFlags.TakeSnapshot = 1;
     while(1)
     {
         if(ControlFlags.MediumEventFlag)
 			MediumEvent();				
 		if(ControlFlags.SlowEventFlag)
 			SlowEvent();
-        if(ControlFlags.UARTEventFlag)
-        {
-            ControlFlags.UARTEventFlag = 0;
-        }
     }
     return 0;
 }
@@ -71,4 +66,5 @@ void INIT_SYSTEMS(void)
     UART1_Initialize();
     MCPWM_Initialize();
     Init_ADC();
+    UART1_WriteBuffer("BLDC SENSORLESS CONTROLER\r",26);
 }

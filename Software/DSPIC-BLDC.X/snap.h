@@ -8,13 +8,14 @@
 #ifndef SNAP_H
 #define	SNAP_H
 
-//#define SNAPSHOT
+
 
 #ifdef SNAPSHOT
-int pha_Raw;
-int pha_pre_filtered;
-int pha_filtered;
-int signal_average_uart;
+	#define SNAPSIZE 64   // this number must be 2 to some power x  (i.e. 8, 16, 1024, 256) MASKING will be messed up if you don't do this
+extern int SnapBuf1[SNAPSIZE];
+extern int SnapBuf2[SNAPSIZE];
+extern int SnapBuf3[SNAPSIZE];
+extern int SnapBuf4[SNAPSIZE];
 #endif
 
 #endif	/* SNAP_H */
