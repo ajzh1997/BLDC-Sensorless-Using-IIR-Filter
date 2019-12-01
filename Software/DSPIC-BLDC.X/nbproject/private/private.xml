@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/bldc.c</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/dsp.h</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/driver/adc.c</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/bldc.h</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/system_config/medium_event.c</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/main_bldc.c</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/system_config/turning.c</file>
-            <file>file:/F:/Sensorless%20BLDC%20Control/Software/DSPIC-BLDC-01.X/system_config/general.h</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/system_config/turning.c</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/system_config/general.h</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/system_config/medium_event.c</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/dsp.h</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/driver/MCPWM.c</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/driver/MCPWM.h</file>
+            <file>file:/F:/Sensorless%20BLDC%20Control/BLDC-Sensorless-Using-IIR-Filter/Software/DSPIC-BLDC.X/main_bldc.c</file>
         </group>
     </open-files>
 </project-private>

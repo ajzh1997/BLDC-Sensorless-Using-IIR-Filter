@@ -75,6 +75,12 @@ extern unsigned int OneEightyDegreeTime[16];
 #define		STATE4 	0x2100		// C top, A bottom, B BEMF
 #define  	STATE5  0x2400		// C top, B bottom, A BEMF
 
+//#define		STATE0 	0x2001		// A top, B bottom, C BEMF
+//#define		STATE1 	0x2004		// A top, C bottom, B BEMF		 
+//#define		STATE2 	0x0204		// B top, C bottom, A BEMF
+//#define		STATE3 	0x0210		// B top, A bottom, C BEMF
+//#define		STATE4 	0x0810		// C top, A bottom, B BEMF
+//#define  	STATE5  0x0801		// C top, B bottom, A BEMF
 // Sector 0 -- looking for FALLING edge Phase C
 // Sector 1 -- looking for RISING edge Phase B
 // Sector 2 -- looking for FALLING edge Phase A		

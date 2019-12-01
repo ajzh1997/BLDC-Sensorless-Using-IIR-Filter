@@ -25,7 +25,8 @@ int main(void)
 	IIRTransposeFilterInit( &BEMF_phaseB_Filter );
 	IIRTransposeFilterInit( &BEMF_phaseC_Filter );
     RunMode = MOTOR_OFF;
-    ControlFlags.SpeedControlEnable = 1;
+    ControlFlags.EnablePotentiometer = 1;
+    ControlFlags.SpeedControlEnable = 0;
     ControlFlags.TakeSnapshot = 1;
     while(1)
     {
@@ -66,5 +67,6 @@ void INIT_SYSTEMS(void)
     UART1_Initialize();
     MCPWM_Initialize();
     Init_ADC();
+
     UART1_WriteBuffer("BLDC SENSORLESS CONTROLER\r",26);
 }

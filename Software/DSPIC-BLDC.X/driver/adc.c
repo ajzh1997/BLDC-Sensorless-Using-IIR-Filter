@@ -16,8 +16,16 @@ void Init_ADC( void )
    
  	/* set channel scanning here, auto sampling and convert, 
  	   with default read-format mode */
-	ADCON1 = 0x00E4;
-	
+//	ADCON1 = 0x00E4;    //11100100
+    ADCON1 = 0x0000;
+    ADCON1bits.DONE = 0; //conversion is NOT done
+    ADCON1bits.SAMP = 0;
+    ADCON1bits.ASAM = 1;
+    ADCON1bits.SIMSAM = 0;
+    ADCON1bits.SSRC0 = 1;
+    ADCON1bits.SSRC1 = 1;
+    ADCON1bits.SSRC2 = 1;
+    
 	/* channel scan for CH0+, Use MUX A,  
 	   SMPI = 5 per interrupt, Vref = AVdd/AVss */
 	ADCON2 = ADCON2_LOW_SPEED;		// intializ for low speed mode
@@ -34,7 +42,7 @@ void Init_ADC( void )
 	ADCSSL = ADCSSL_LOW_SPEED;  // Scan all 5 channels
 	
 	/* channel select AN7 */
-	ADCHS = 0x0002;
+	ADCHS = 0x0000;
 //    ADCHSbits.CH0SA1 = 1;
 //    ADCHSbits.CH0NA = 0;
 	/* reset ADC interrupt flag */

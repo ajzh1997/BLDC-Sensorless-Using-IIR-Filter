@@ -13,7 +13,7 @@ void MediumEvent(void)
 	static int motor_speed;
 	static unsigned long ThreeSixtyDegreeAverage;
 	unsigned int i;
-
+    
 	ControlFlags.MediumEventFlag = 0;
 	{
 		PWMCON2bits.UDIS = 1;  			// disable the duty cycle update
@@ -49,6 +49,19 @@ void MediumEvent(void)
 					ControlFlags.HighSpeedMode = 0;
 					HighLowCntr = 0;
 				}
+                static bool lastMode = true;
+                if(ControlFlags.HighSpeedMode != lastMode)
+                {
+                    if(ControlFlags.HighSpeedMode)
+                    {
+                        //printf("High speed mode\n");
+                    }
+                    else
+                    {
+                        //printf("Low speed mode\n");
+                    }
+                }
+                lastMode = ControlFlags.HighSpeedMode;
 			// no "break" continue on into HALL_SENSOR_MODEE
 			case HALL_SENSOR_MODE:
 				ThreeSixtyDegreeAverage = 0;
@@ -68,8 +81,8 @@ void MediumEvent(void)
 				Speed = (unsigned long)(__builtin_divud(((unsigned long)ElectricalSpeed*120),NoOfMotorPoles));
 				if (ControlFlags.SpeedControlEnable)
 				{
-					//PIDStructure.controlReference = RPM_converter_constant * pot;
-                    PIDStructure.controlReference = 3000;
+					PIDStructure.controlReference = RPM_converter_constant * pot;
+                    //PIDStructure.controlReference = 2700;
 					PIDStructure.measuredOutput = Speed;
 					PID(&PIDStructure);
 					if (PIDStructure.controlOutput < 0)
@@ -85,15 +98,35 @@ void MediumEvent(void)
                     }
 					PDC2 = PDC1;
 					PDC3 = PDC1;
-                    printf("%d\n",PIDStructure.controlOutput);
+                    printf("%d\n",PIDStructure.controlReference);
                     //printf("%d\n",PDC1);
 				}
 				else if (ControlFlags.EnablePotentiometer)
-				{
-					PDC1 = (unsigned int) ((unsigned long)pot*FULL_DUTY/0x3FF);
-                    //PDC1 = 1000;
-					PDC2 = PDC1;
-					PDC3 = PDC1;
+				{   
+                    static uint16_t DesiredPWMDutyCycle = 0;
+                    static uint16_t CurrentPWMDutyCycle = 0;
+                    CurrentPWMDutyCycle = PDC1;
+                    DesiredPWMDutyCycle = (unsigned int) ((unsigned long)pot*FULL_DUTY/0x3FF);
+                    if(CurrentPWMDutyCycle != DesiredPWMDutyCycle)
+                    {
+                        if(CurrentPWMDutyCycle < DesiredPWMDutyCycle)
+                            CurrentPWMDutyCycle++;		
+                        if(CurrentPWMDutyCycle > DesiredPWMDutyCycle)
+                            CurrentPWMDutyCycle--;
+                    }
+                    if (CurrentPWMDutyCycle < 0)
+                        CurrentPWMDutyCycle = 0;
+                    if (CurrentPWMDutyCycle > FULL_DUTY)
+                        CurrentPWMDutyCycle = FULL_DUTY;
+					//PDC1 = (unsigned int) ((unsigned long)pot*FULL_DUTY/0x3FF);
+                    //PDC1 = FULL_DUTY;
+//					PDC2 = PDC1;
+//					PDC3 = PDC1;
+                    PDC1 = CurrentPWMDutyCycle;
+                    PDC2 = CurrentPWMDutyCycle;
+                    PDC3 = CurrentPWMDutyCycle;
+                    //printf("%d,%ld\n",PDC1,Speed);
+                    printf("%d,%d\n",ADCBUF2,DATA2);
 				}
 
 				break;
@@ -139,12 +172,11 @@ void MediumEvent(void)
 						ramp_speed = ramp_start_speed;  // current ramp speed in PWM interrupts per sector
 						SensorlessStartState++;	
 						break;
-					case RAMP:
+					case RAMP:  // sau khi quá thời gian ram, khởi động chế độ  ssl
 						if (ramp_timer++ >= ramp_duration)
 						{
 							SensorlessStartState = 0;
 							RunMode = SENSORLESS_RUNNING;
-                            //ADCON2 = 0x0010;
 							T3CONbits.TON = 0; 	
 							IEC0bits.T3IE = 0;
 							IFS0bits.T1IF = 0;  
@@ -153,9 +185,11 @@ void MediumEvent(void)
 						else
 						{
 							// check for demand change
-							if (ramp_timer%ramp_demand_rate == 0)
+							if (ramp_timer%ramp_demand_rate == 0) // lực tăng theo thời gian
+                            {
 								ramp_demand++;
-							PDC1 = (unsigned int) ramp_demand;
+							}
+                            PDC1 = (unsigned int) ramp_demand;
 							PDC2 = PDC1;
 							PDC3 = PDC1;
 							// check for speed change

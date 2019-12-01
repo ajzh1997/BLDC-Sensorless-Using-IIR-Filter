@@ -44,6 +44,8 @@ volatile struct ControlFlags ControlFlags;
 unsigned int pos_ptr = 0;
 unsigned int TMR4Save;
 
+unsigned int DATA;
+unsigned int DATA2;
 void CheckZeroCrossing(void);
 unsigned int ThirtyDegreeTimeAverage();
 /*---------------------------------------------------------------------
@@ -52,6 +54,7 @@ unsigned int ThirtyDegreeTimeAverage();
   Inputs:        None
   Returns:       None
 -----------------------------------------------------------------------*/
+
 void __attribute__((__interrupt__ , no_auto_psv)) _ADCInterrupt( void )   // occurs at a rate of 81.920 kHz
 {
 	/* reset ADC interrupt flag */
@@ -62,13 +65,13 @@ void __attribute__((__interrupt__ , no_auto_psv)) _ADCInterrupt( void )   // occ
 	if (BlankingCount)				// if the blanking count hasn't expired, feed the Back EMF
 	{								// filters the last filtered Back EMF sample (rather than the unfiltered sample.)
 		BlankingCount--;
-		vpha = vpha_filtered_sample;
-		vphb = vphb_filtered_sample;
-		vphc = vphc_filtered_sample;
+//		vpha = vpha_filtered_sample;
+//		vphb = vphb_filtered_sample;
+//		vphc = vphc_filtered_sample;
 
-//		vpha = (3*vpha_filtered_sample + VPHABUF)>>2;  // This three lines can be used an a alternative to the 
-//		vphb = (3*vphb_filtered_sample + VPHBBUF)>>2;  //  previous three lines
-//		vphc = (3*vphc_filtered_sample + VPHCBUF)>>2;
+		vpha = (3*vpha_filtered_sample + VPHABUF)>>2;  // This three lines can be used an a alternative to the 
+		vphb = (3*vphb_filtered_sample + VPHBBUF)>>2;  //  previous three lines
+		vphc = (3*vphc_filtered_sample + VPHCBUF)>>2;
 	}
 	else
 	{
@@ -189,12 +192,6 @@ void __attribute__((__interrupt__ , no_auto_psv)) _PWMInterrupt( void )  // Occu
 		MediumEventCounter = 0;
 		ControlFlags.MediumEventFlag = 1;
 	}
-//    if(++UARTEventCounter >= 2000)  // 100ms
-//    {
-//        UARTEventCounter = 0;
-//        ControlFlags.UARTEventFlag = 1;
-//    }
-    //
 	if (RunMode == SENSORLESS_START)
 	{
 		MediumEventCounter += 9;  // Fire Medium event every 100us in SENSORLESS_START mode
@@ -233,7 +230,8 @@ void CheckZeroCrossing(void)
 	signal_average = vbus/2 + vbus_offset;
 	accumulator_c += vpha_filtered_sample - signal_average;
 	vbus_offset = accumulator_c >> 13;
-
+    DATA = signal_average;
+    DATA2 = vpha_filtered_sample;
 	#ifdef SNAPSHOT
 		if (ControlFlags.TakeSnapshot)     // The TakeSnapshot control flag is set by pressing S6
 		{

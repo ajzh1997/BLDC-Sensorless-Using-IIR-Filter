@@ -34,6 +34,8 @@ extern volatile unsigned int NumOfTimer1TimeOuts;  // Defines the number of Time
 extern volatile unsigned int NoOfMotorPoles; // Number of motor poles
 //------------------------ Function Declarations -------------
 extern void GetParameters();
-
+//-------------
+extern unsigned int DATA;
+extern unsigned int DATA2;
 #endif	/* TURNING_H */
 

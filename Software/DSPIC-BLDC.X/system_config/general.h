@@ -47,8 +47,8 @@
 #define ADCSSL_HIGH_SPEED 0x0045    // scan AN7, AN11, AN12
 
 // Define the ADC result buffers for the analog pins
-#define POTBUF	ADCBUF0		//AN7
-#define VBUSBUF	ADCBUF1		//AN11
+#define VBUSBUF	ADCBUF0		//AN7
+#define POTBUF	ADCBUF1		//AN11 POTBUF
 #define VPHABUF	ADCBUF2		//AN12
 #define VPHBBUF	ADCBUF3		//AN13
 #define VPHCBUF ADCBUF4		//AN14
