@@ -16,10 +16,40 @@
 #include "BEMF_filter.h"
 #include "IIR_Filter.h"
 #include "snap.h"
+#include "RTDM.h"
+#define AMOUNT_OF_DATA_TO_BE_PLOTTED 256 //number of sanpshot samples 512 bytes or 256 16-bit words
+
+////////////////////////////////////////////////////////////////////////////////
+/************************************ MAIN ***********************************/
+////////////////////////////////////////////////////////////////////////////////
+unsigned int MyVariable, Frequency, Amplitude;								//Varaible to be recored and its paramters to be modified using the DMCI sliders
+unsigned int SnapShotBufferPlottedInDMCI[AMOUNT_OF_DATA_TO_BE_PLOTTED];		//buffer where the data is recorded
+unsigned int * PointerToSnapShotBuffer = &SnapShotBufferPlottedInDMCI[0];	//Tail pointer required to plot circular buffers in DMCI
+unsigned int * PointerToSnapShotBufferUpperLimit = &SnapShotBufferPlottedInDMCI[0] + AMOUNT_OF_DATA_TO_BE_PLOTTED -1;
+																			//Buffer Upper limit
+
+
+
+struct 
+{
+	unsigned TrigggerSnapshot: 	1; //Tirgger variable to start recording the values of MyVariable
+    unsigned LED_C13: 	1;		   //Definition of Exp 16 LED D3-D6
+    unsigned LED_C14: 	1;
+    unsigned BUTTON_RUN: 	1;
+    unsigned BUTTON_STOP: 	1;
+    unsigned unused :		11;     
+}	MyFlags;
 void INIT_SYSTEMS(void);    // Khởi tạo hệ thống
 
 int main(void) 
 {
+    TRISCbits.TRISC13 = 0;
+    TRISCbits.TRISC14 = 0;
+    TRISDbits.TRISD0 = 1;
+    TRISDbits.TRISD1 = 1;
+    LATCbits.LATC13 = 0;
+    LATCbits.LATC14 = 0;
+    RTDM_Start();
     INIT_SYSTEMS();
     IIRTransposeFilterInit( &BEMF_phaseA_Filter );
 	IIRTransposeFilterInit( &BEMF_phaseB_Filter );
@@ -30,11 +60,24 @@ int main(void)
     ControlFlags.TakeSnapshot = 1;
     while(1)
     {
+        LATCbits.LATC13 = MyFlags.LED_C13;
+        LATCbits.LATC14 = MyFlags.LED_C14;
+        if(MyFlags.BUTTON_RUN && RunMode == MOTOR_OFF)
+        {
+            RunMode = SENSORLESS_INIT;
+            MyFlags.BUTTON_RUN = 0;
+        }
+        if(MyFlags.BUTTON_STOP && RunMode != MOTOR_OFF)
+        {
+            RunMode = MOTOR_OFF;
+        }
+        RTDM_ProcessMsgs();
         if(ControlFlags.MediumEventFlag)
 			MediumEvent();				
 		if(ControlFlags.SlowEventFlag)
 			SlowEvent();
     }
+    RTDM_Close();
     return 0;
 }
 void INIT_SYSTEMS(void)
@@ -64,9 +107,6 @@ void INIT_SYSTEMS(void)
 	IEC0bits.T3IE = 0;
 
 	T4CON = 0x8010;    			// turn on timer 4
-    UART1_Initialize();
     MCPWM_Initialize();
     Init_ADC();
-
-    UART1_WriteBuffer("BLDC SENSORLESS CONTROLER\r",26);
 }

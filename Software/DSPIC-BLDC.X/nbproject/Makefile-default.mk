@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=system_config/system.c driver/uart.c driver/MCPWM.c system_config/medium_event.c system_config/slow_event.c driver/adc.c main_bldc.c bldc.c system_config/turning.c pid.s BEMF_filter.s IIR_Filter.s
+SOURCEFILES_QUOTED_IF_SPACED=system_config/system.c driver/MCPWM.c system_config/medium_event.c system_config/slow_event.c driver/adc.c main_bldc.c bldc.c system_config/turning.c pid.s BEMF_filter.s IIR_Filter.s RTDM.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/system_config/system.o ${OBJECTDIR}/driver/uart.o ${OBJECTDIR}/driver/MCPWM.o ${OBJECTDIR}/system_config/medium_event.o ${OBJECTDIR}/system_config/slow_event.o ${OBJECTDIR}/driver/adc.o ${OBJECTDIR}/main_bldc.o ${OBJECTDIR}/bldc.o ${OBJECTDIR}/system_config/turning.o ${OBJECTDIR}/pid.o ${OBJECTDIR}/BEMF_filter.o ${OBJECTDIR}/IIR_Filter.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/system_config/system.o.d ${OBJECTDIR}/driver/uart.o.d ${OBJECTDIR}/driver/MCPWM.o.d ${OBJECTDIR}/system_config/medium_event.o.d ${OBJECTDIR}/system_config/slow_event.o.d ${OBJECTDIR}/driver/adc.o.d ${OBJECTDIR}/main_bldc.o.d ${OBJECTDIR}/bldc.o.d ${OBJECTDIR}/system_config/turning.o.d ${OBJECTDIR}/pid.o.d ${OBJECTDIR}/BEMF_filter.o.d ${OBJECTDIR}/IIR_Filter.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/system_config/system.o ${OBJECTDIR}/driver/MCPWM.o ${OBJECTDIR}/system_config/medium_event.o ${OBJECTDIR}/system_config/slow_event.o ${OBJECTDIR}/driver/adc.o ${OBJECTDIR}/main_bldc.o ${OBJECTDIR}/bldc.o ${OBJECTDIR}/system_config/turning.o ${OBJECTDIR}/pid.o ${OBJECTDIR}/BEMF_filter.o ${OBJECTDIR}/IIR_Filter.o ${OBJECTDIR}/RTDM.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/system_config/system.o.d ${OBJECTDIR}/driver/MCPWM.o.d ${OBJECTDIR}/system_config/medium_event.o.d ${OBJECTDIR}/system_config/slow_event.o.d ${OBJECTDIR}/driver/adc.o.d ${OBJECTDIR}/main_bldc.o.d ${OBJECTDIR}/bldc.o.d ${OBJECTDIR}/system_config/turning.o.d ${OBJECTDIR}/pid.o.d ${OBJECTDIR}/BEMF_filter.o.d ${OBJECTDIR}/IIR_Filter.o.d ${OBJECTDIR}/RTDM.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/system_config/system.o ${OBJECTDIR}/driver/uart.o ${OBJECTDIR}/driver/MCPWM.o ${OBJECTDIR}/system_config/medium_event.o ${OBJECTDIR}/system_config/slow_event.o ${OBJECTDIR}/driver/adc.o ${OBJECTDIR}/main_bldc.o ${OBJECTDIR}/bldc.o ${OBJECTDIR}/system_config/turning.o ${OBJECTDIR}/pid.o ${OBJECTDIR}/BEMF_filter.o ${OBJECTDIR}/IIR_Filter.o
+OBJECTFILES=${OBJECTDIR}/system_config/system.o ${OBJECTDIR}/driver/MCPWM.o ${OBJECTDIR}/system_config/medium_event.o ${OBJECTDIR}/system_config/slow_event.o ${OBJECTDIR}/driver/adc.o ${OBJECTDIR}/main_bldc.o ${OBJECTDIR}/bldc.o ${OBJECTDIR}/system_config/turning.o ${OBJECTDIR}/pid.o ${OBJECTDIR}/BEMF_filter.o ${OBJECTDIR}/IIR_Filter.o ${OBJECTDIR}/RTDM.o
 
 # Source Files
-SOURCEFILES=system_config/system.c driver/uart.c driver/MCPWM.c system_config/medium_event.c system_config/slow_event.c driver/adc.c main_bldc.c bldc.c system_config/turning.c pid.s BEMF_filter.s IIR_Filter.s
+SOURCEFILES=system_config/system.c driver/MCPWM.c system_config/medium_event.c system_config/slow_event.c driver/adc.c main_bldc.c bldc.c system_config/turning.c pid.s BEMF_filter.s IIR_Filter.s RTDM.c
 
 
 
@@ -101,13 +101,6 @@ ${OBJECTDIR}/system_config/system.o: system_config/system.c  nbproject/Makefile-
 	@${RM} ${OBJECTDIR}/system_config/system.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  system_config/system.c  -o ${OBJECTDIR}/system_config/system.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/system_config/system.o.d"      -g -D__DEBUG     -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/system_config/system.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/driver/uart.o: driver/uart.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/driver" 
-	@${RM} ${OBJECTDIR}/driver/uart.o.d 
-	@${RM} ${OBJECTDIR}/driver/uart.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  driver/uart.c  -o ${OBJECTDIR}/driver/uart.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/driver/uart.o.d"      -g -D__DEBUG     -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/driver/uart.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/driver/MCPWM.o: driver/MCPWM.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/driver" 
@@ -158,6 +151,13 @@ ${OBJECTDIR}/system_config/turning.o: system_config/turning.c  nbproject/Makefil
 	${MP_CC} $(MP_EXTRA_CC_PRE)  system_config/turning.c  -o ${OBJECTDIR}/system_config/turning.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/system_config/turning.o.d"      -g -D__DEBUG     -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/system_config/turning.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/RTDM.o: RTDM.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/RTDM.o.d 
+	@${RM} ${OBJECTDIR}/RTDM.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  RTDM.c  -o ${OBJECTDIR}/RTDM.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTDM.o.d"      -g -D__DEBUG     -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/RTDM.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/system_config/system.o: system_config/system.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/system_config" 
@@ -165,13 +165,6 @@ ${OBJECTDIR}/system_config/system.o: system_config/system.c  nbproject/Makefile-
 	@${RM} ${OBJECTDIR}/system_config/system.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  system_config/system.c  -o ${OBJECTDIR}/system_config/system.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/system_config/system.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/system_config/system.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/driver/uart.o: driver/uart.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/driver" 
-	@${RM} ${OBJECTDIR}/driver/uart.o.d 
-	@${RM} ${OBJECTDIR}/driver/uart.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  driver/uart.c  -o ${OBJECTDIR}/driver/uart.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/driver/uart.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/driver/uart.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/driver/MCPWM.o: driver/MCPWM.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/driver" 
@@ -221,6 +214,13 @@ ${OBJECTDIR}/system_config/turning.o: system_config/turning.c  nbproject/Makefil
 	@${RM} ${OBJECTDIR}/system_config/turning.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  system_config/turning.c  -o ${OBJECTDIR}/system_config/turning.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/system_config/turning.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/system_config/turning.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/RTDM.o: RTDM.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/RTDM.o.d 
+	@${RM} ${OBJECTDIR}/RTDM.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  RTDM.c  -o ${OBJECTDIR}/RTDM.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTDM.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -mcci -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/RTDM.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

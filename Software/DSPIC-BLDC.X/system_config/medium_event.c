@@ -28,17 +28,29 @@ void MediumEvent(void)
 			case SENSORLESS_RUNNING:	
 				DegreesAdvanced =  __builtin_divud(((Speed-phase_advance_start) * phase_advance_slope),1000);
 				if (DegreesAdvanced > MAX_PHASE_ADVANCE)	// Limit Phase advance to MAX_PHASE_ADVANCE
+                {
 					DegreesAdvanced = MAX_PHASE_ADVANCE;	
+                }
 				if (DegreesAdvanced <= 0)	// Because DegreesAdvanced is a divisor (in the next few line) alway have at least 1 degree of advance
+                {
 					phase_advance = 0;
+                }
 				else if (Speed > phase_advance_start)
+                {
 					phase_advance = __builtin_divud(((unsigned long)ThreeSixtyDegreeAverage*DegreesAdvanced),360);
+                }
 				else
+                {
 					phase_advance = 0;
+                }
 				if (ElectricalSpeed > (CrossOverERPS + 50))  // If electrical speed per second is over 300 then consider going to high speed mode
-					HighLowCntr++;	
+                {
+                    HighLowCntr++;	
+                }
 				if (ElectricalSpeed < (CrossOverERPS - 50))	// If electrical speed per second is under 250 then consider going to low speed mode
-					HighLowCntr--;
+                {
+                    HighLowCntr--;
+                }
 				if (HighLowCntr > 20)	    // The device only goes into high speed mode when the HighLowCntr reaches a certain magnitude
 				{
 					ControlFlags.HighSpeedMode = 1;
@@ -48,20 +60,7 @@ void MediumEvent(void)
 				{
 					ControlFlags.HighSpeedMode = 0;
 					HighLowCntr = 0;
-				}
-                static bool lastMode = true;
-                if(ControlFlags.HighSpeedMode != lastMode)
-                {
-                    if(ControlFlags.HighSpeedMode)
-                    {
-                        //printf("High speed mode\n");
-                    }
-                    else
-                    {
-                        //printf("Low speed mode\n");
-                    }
-                }
-                lastMode = ControlFlags.HighSpeedMode;
+				}                
 			// no "break" continue on into HALL_SENSOR_MODEE
 			case HALL_SENSOR_MODE:
 				ThreeSixtyDegreeAverage = 0;
@@ -73,20 +72,28 @@ void MediumEvent(void)
 				// Electrical Speed is equal to the processor frequency divided by 
 				//  the Timer prescaler divied by the number of timer counts for 
 				//  360 degrees. This is electrical revolutions per second
+                // Tốc độ điện bằng tần số bộ xử lý chia cho
+                // bộ đếm trước bộ đếm thời gian được chia cho số lượng bộ đếm thời gian cho
+                //  360 độ. Đây là vòng quay điện mỗi giây
 				ElectricalSpeed = (__builtin_divud(FCY,((unsigned int)ThreeSixtyDegreeAverage)))/TMR1_PRESCALER;
 				// Speed in RPM is equivalent to the electrical revolutions per 
 				//	second times 60 divided by the number of pole pairs (poles 
 				//  divided by 2 - hence the 2 in the numerator of the following 
 				//  equation.)
+                // Tốc độ tính bằng RPM tương đương với số vòng quay điện trên mỗi
+                // lần thứ hai 60 chia cho số cặp cực (cực
+                // chia cho 2 - do đó 2 trong tử số của sau
+                // phương trình.)
 				Speed = (unsigned long)(__builtin_divud(((unsigned long)ElectricalSpeed*120),NoOfMotorPoles));
 				if (ControlFlags.SpeedControlEnable)
 				{
 					PIDStructure.controlReference = RPM_converter_constant * pot;
-                    //PIDStructure.controlReference = 2700;
 					PIDStructure.measuredOutput = Speed;
 					PID(&PIDStructure);
 					if (PIDStructure.controlOutput < 0)
+                    {
 						PIDStructure.controlOutput = 0;
+                    }
 					if (PIDStructure.controlOutput > 32439) 
 					{
 						PDC1 = FULL_DUTY;
@@ -98,8 +105,6 @@ void MediumEvent(void)
                     }
 					PDC2 = PDC1;
 					PDC3 = PDC1;
-                    printf("%d\n",PIDStructure.controlReference);
-                    //printf("%d\n",PDC1);
 				}
 				else if (ControlFlags.EnablePotentiometer)
 				{   
@@ -110,30 +115,33 @@ void MediumEvent(void)
                     if(CurrentPWMDutyCycle != DesiredPWMDutyCycle)
                     {
                         if(CurrentPWMDutyCycle < DesiredPWMDutyCycle)
+                        {
                             CurrentPWMDutyCycle++;		
+                        }
                         if(CurrentPWMDutyCycle > DesiredPWMDutyCycle)
+                        {
                             CurrentPWMDutyCycle--;
+                        }
                     }
                     if (CurrentPWMDutyCycle < 0)
+                    {
                         CurrentPWMDutyCycle = 0;
+                    }
                     if (CurrentPWMDutyCycle > FULL_DUTY)
+                    {
                         CurrentPWMDutyCycle = FULL_DUTY;
+                    }
 					//PDC1 = (unsigned int) ((unsigned long)pot*FULL_DUTY/0x3FF);
-                    //PDC1 = FULL_DUTY;
-//					PDC2 = PDC1;
-//					PDC3 = PDC1;
                     PDC1 = CurrentPWMDutyCycle;
                     PDC2 = CurrentPWMDutyCycle;
                     PDC3 = CurrentPWMDutyCycle;
-                    //printf("%d,%ld\n",PDC1,Speed);
-                    printf("%d,%d\n",ADCBUF2,DATA2);
 				}
-
 				break;
 			case SENSORLESS_INIT:
 				GetParameters();
 				signal_average = (vbus >> 1);
 				// once the parameters are set up, initiate the sensorless start
+                // một khi các tham số được thiết lập, bắt đầu khởi động không cảm biến
 				RunMode = SENSORLESS_START;
 				HighLowCntr = 0;
 				ControlFlags.HighSpeedMode = 0;
@@ -175,12 +183,13 @@ void MediumEvent(void)
 					case RAMP:  // sau khi quá thời gian ram, khởi động chế độ  ssl
 						if (ramp_timer++ >= ramp_duration)
 						{
-							SensorlessStartState = 0;
+							//SensorlessStartState = 0;
 							RunMode = SENSORLESS_RUNNING;
 							T3CONbits.TON = 0; 	
 							IEC0bits.T3IE = 0;
 							IFS0bits.T1IF = 0;  
 							IEC0bits.T1IE = 1;	
+                            ramp_timer = ramp_duration;
 						}
 						else
 						{

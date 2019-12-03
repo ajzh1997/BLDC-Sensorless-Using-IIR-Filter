@@ -3,7 +3,6 @@
 #include "system_config/turning.h"
 #include "system_config/medium_event.h"
 #include "system_config/slow_event.h"
-#include "driver/uart.h"
 #include "driver/MCPWM.h"
 #include "driver/adc.h"
 #include "dsp.h"

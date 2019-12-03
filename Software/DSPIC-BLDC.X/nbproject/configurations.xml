@@ -9,7 +9,6 @@
       <logicalFolder name="system_config"
                      displayName="system_config"
                      projectFiles="true">
-        <itemPath>driver/uart.h</itemPath>
         <itemPath>driver/MCPWM.h</itemPath>
         <itemPath>system_config/medium_event.h</itemPath>
         <itemPath>system_config/slow_event.h</itemPath>
@@ -23,6 +22,8 @@
       <itemPath>BEMF_filter.h</itemPath>
       <itemPath>IIR_Filter.h</itemPath>
       <itemPath>snap.h</itemPath>
+      <itemPath>RTDM.h</itemPath>
+      <itemPath>RTDMUSER.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -37,7 +38,6 @@
                      displayName="system_config"
                      projectFiles="true">
         <itemPath>system_config/system.c</itemPath>
-        <itemPath>driver/uart.c</itemPath>
         <itemPath>driver/MCPWM.c</itemPath>
         <itemPath>system_config/medium_event.c</itemPath>
         <itemPath>system_config/slow_event.c</itemPath>
@@ -50,6 +50,7 @@
       <itemPath>dspcommon.inc</itemPath>
       <itemPath>BEMF_filter.s</itemPath>
       <itemPath>IIR_Filter.s</itemPath>
+      <itemPath>RTDM.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -85,7 +86,7 @@
         </archiverTool>
         <loading>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
-          <parseOnProdLoad>false</parseOnProdLoad>
+          <parseOnProdLoad>true</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
         <subordinates>

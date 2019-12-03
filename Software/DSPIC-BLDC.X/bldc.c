@@ -226,45 +226,39 @@ void CheckZeroCrossing(void)
 		BEMF_phaseA_Filter.pCoefs = &BEMF_filterCoefs_81940Hz;
 	BlockIIRTransposeFilter( &BEMF_phaseA_Filter, &vpha, &vpha_filtered_sample, 1 );  // Get a filtered sample
 
-	// finds the center voltage of the phase signal even under different loads
+	// tìm thấy điện áp trung tâm của tín hiệu pha ngay cả dưới các tải khác nhau
 	signal_average = vbus/2 + vbus_offset;
 	accumulator_c += vpha_filtered_sample - signal_average;
 	vbus_offset = accumulator_c >> 13;
+    // bat data de gui len terminal
     DATA = signal_average;
     DATA2 = vpha_filtered_sample;
-	#ifdef SNAPSHOT
-		if (ControlFlags.TakeSnapshot)     // The TakeSnapshot control flag is set by pressing S6
-		{
-			SnapBuf1[pos_ptr] = ADCBUF2; // phase A Raw data	
-			SnapBuf2[pos_ptr] = vpha;	 // phase A pre-filtered data (includes effect of blanking count)
-			SnapBuf3[pos_ptr] = vpha_filtered_sample; // phase a filtered sample
-			SnapBuf4[pos_ptr] = signal_average;
-			pos_ptr++;
-			if(pos_ptr > (SNAPSIZE-1))
-			{
-				pos_ptr = 0;
-				ControlFlags.TakeSnapshot = 0;  // Clear the flag to prevent creating a circular buffer
-			}
-		}
-	#endif
-
 	if (ZeroCrossState < 6)
+    {
 		phase_delay = FILTER_PHASE_DELAY + PROCESSING_DELAY + phase_advance;
+    }
 	else
+    {
 		phase_delay = FILTER_PHASE_DELAY + PROCESSING_DELAY_HS + phase_advance;
+    }
 
 	switch(ZeroCrossState)
 	{
 // States 0 - 5 implement the low speed mode of this algorithm.  All three phase voltages are sampled. The sampling frequency
 // is 49kHz when running in high speed mode. 
+        
+//State 0 - 5 thực hiện chế độ tốc độ thấp của thuật toán này. Tất cả ba điện áp pha được lấy mẫu. Tần suất lấy mẫu
+//là 49kHz khi chạy ở chế độ tốc độ cao.
 		case 0:
-			if (vpha_filtered_sample < signal_average)   // signal is falling look for when it falls below center voltage
+			if (vpha_filtered_sample < signal_average)   // tín hiệu đang giảm khi tìm dưới mức điện áp trung tâm
 			{
 				SixtyDegreeTime[ZeroCrossState] = TMR1;
 				TMR1 = 0;
 				ThirtyDegreeTime = ThirtyDegreeTimeAverage();			
 				if (ThirtyDegreeTime < phase_delay)
+                {
 					ThirtyDegreeTime = phase_delay;
+                }
 				PR3 = ThirtyDegreeTime - phase_delay;
 				NextSectorState = 3;
 				T3CONbits.TON = 1; 	
@@ -324,6 +318,7 @@ void CheckZeroCrossing(void)
 				SpeedPtr++;
 				ZeroCrossState++;
 				// do the change over from LowSpeedMode to HighSpeed Mode
+                // thay đổi từ Chế độ tốc độ thấp sang Chế độ tốc độ cao
 				if (ControlFlags.HighSpeedMode)
 				{
 					ZeroCrossState = 6;
@@ -331,7 +326,7 @@ void CheckZeroCrossing(void)
 					PR2 = ThirtyDegreeTime*2;
 					IFS0bits.T2IF = 0;	  
 					IEC0bits.T2IE = 1;
-					ControlFlags.TakeSnapshot = 1;  // take shapshot on crossover
+					//ControlFlags.TakeSnapshot = 1;  // take shapshot on crossover
 					ADCON1bits.ADON = 0;		// Turn ADC module off before modifying control bits;
 					ADCSSL = ADCSSL_HIGH_SPEED;  // only read the pot, vbus and vpha
 					ADCON2 = ADCON2_HIGH_SPEED;  // interrupt after three adc reads (adc interrupt frequency changes to 81.94 kHz)
@@ -346,7 +341,9 @@ void CheckZeroCrossing(void)
 				TMR1 = 0;
 				ThirtyDegreeTime = ThirtyDegreeTimeAverage();
 				if (ThirtyDegreeTime < phase_delay)
+                {
 					ThirtyDegreeTime = phase_delay;
+                }
 				PR3 = ThirtyDegreeTime - phase_delay;
 				NextSectorState = 1;
 				T3CONbits.TON = 1; 	
@@ -363,7 +360,9 @@ void CheckZeroCrossing(void)
 				TMR1 = 0;
 				ThirtyDegreeTime = ThirtyDegreeTimeAverage();
 				if (ThirtyDegreeTime < phase_delay)
+                {
 					ThirtyDegreeTime = phase_delay;
+                }
 				PR3 = ThirtyDegreeTime - phase_delay;
 				NextSectorState = 2;
 				T3CONbits.TON = 1; 	
@@ -375,8 +374,11 @@ void CheckZeroCrossing(void)
 			break;
 // States 6 - 9 implement the high speed mode of this algorithm.  Only one phase voltage is sampled. The sampling frequency
 // is 81kHz when running in high speed mode.  
+// State 6 - 9 thực hiện chế độ tốc độ cao của thuật toán này. Chỉ có một điện áp pha được lấy mẫu. Tần suất lấy mẫu
+// là 81kHz khi chạy ở chế độ tốc độ cao.            
 		case 6:
 			// Wait in this state until it's safe to check for the next zero cross event
+            //Đợi ở State này cho đến khi an toàn để kiểm tra sự kiện ZC tiếp theo
 //			if (vpha_filtered_sample > (signal_average + 15))   
 //				ZeroCrossState++;
 			if (Sector == 2)
@@ -390,9 +392,13 @@ void CheckZeroCrossing(void)
 				ThreeSixtyDegreeTime = OneEightyDegreeTime[SpeedPtr&0x000F] + OneEightyDegreeTime[(SpeedPtr-1)&0x000F];
 				PR2 = ThreeSixtyDegreeTime/6;
 				if ((ThreeSixtyDegreeTime>>2) < phase_delay)
+                {
 					PR3 = 0;
+                }
 				else
+                {
 					PR3 = (ThreeSixtyDegreeTime>>2) - phase_delay;
+                }
 				SpeedPtr++;
 				NextSectorState = 4;
 				T3CONbits.TON = 1; 	
@@ -415,9 +421,13 @@ void CheckZeroCrossing(void)
 				ThreeSixtyDegreeTime = OneEightyDegreeTime[SpeedPtr&0x000F] + OneEightyDegreeTime[(SpeedPtr-1)&0x000F];
 				PR2 = ThreeSixtyDegreeTime/6;
 				if ((ThreeSixtyDegreeTime>>2) < phase_delay)
+                {
 					PR3 = 0;
+                }
 				else
+                {
 					PR3 = (ThreeSixtyDegreeTime>>2) - phase_delay;
+                }
 				SpeedPtr++;
 				NextSectorState = 1;
 				T3CONbits.TON = 1; 	
